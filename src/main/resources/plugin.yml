@@ -1,0 +1,8 @@
+author: Daniel Rampelt
+database: false
+description: A server chat bot.
+generator: http://dinnerbone.com/minecraft/tools/pluginator/
+main: ca.drmc.daisy.Daisy
+name: Daisy
+startup: postworld
+version: '2.0'
