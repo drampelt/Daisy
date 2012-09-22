@@ -1,22 +1,190 @@
 package ca.drmc.daisy;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Logger;
+
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import ca.drmc.daisy.LazyConfig;
+
 public class Daisy extends JavaPlugin implements Listener {
-    public void onDisable() {
-        // TODO: Place any custom disable code here.
-    }
 
-    public void onEnable() {
-        getServer().getPluginManager().registerEvents(this, this);
-    }
+	private static final Logger log = Logger.getLogger("Minecraft");
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        event.getPlayer().sendMessage("Welcome, " + event.getPlayer().getDisplayName() + "!");
+	private LazyConfig config;
+	private ChatResponder responder;
+	
+	private String prefix;
+
+	public void onDisable() {
+		saveCfg();
+	}
+
+	public void onEnable() {
+		getServer().getPluginManager().registerEvents(this, this);
+		
+		config = new LazyConfig(this);
+		if(!config.CONFIG_FILE.exists()){
+			saveCfg();
+		}
+		loadCfg();
+		log.info("[" + getDescription().getName() + "] DEBUG: HashMap values - " + config.players.values());
+		updatePrefix(config.name);
+		
+		responder = new ChatResponder(this);
+		
+		log.info("[" + getDescription().getName() + "] - Enabled!");
+	}
+
+	public void updatePrefix(String n) {
+		prefix = ChatColor.translateAlternateColorCodes('&', config.format.replaceAll("\\+name", config.name));
+	}
+
+	@EventHandler
+	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		String m = event.getMessage().replaceAll("[^a-zA-Z0-9 ]+","");
+		log("Original: " + event.getMessage() + " | Modified: " + m);
+		String[] split = m.split(" ");
+		if(split[split.length-1].equalsIgnoreCase(config.name)){
+			responder.respond(event.getPlayer(), m, split);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		responder.playerJoin(event.getPlayer());
+	}
+	
+	public String formatMessage(String m){
+		return prefix + m;
+	}
+
+	public String getCfgName() {
+		return config.name;
+	}
+
+	public void setCfgName(String name) {
+		config.name = name;
+		updatePrefix(name);
+	}
+
+	public String getCfgFormat() {
+		return config.format;
+	}
+
+	public void setCfgFormat(String format) {
+		config.format = format;
+	}
+
+	public int getCfgMindelay() {
+		return config.mindelay;
+	}
+
+	public void setCfgMindelay(int mindelay) {
+		config.mindelay = mindelay;
+	}
+
+	public int getCfgMaxdelay() {
+		return config.maxdelay;
+	}
+
+	public void setCfgMaxdelay(int maxdelay) {
+		config.maxdelay = maxdelay;
+	}
+	
+	public ConfigPlayer getCfgPlayer(String player){
+		return config.players.get(player);
+	}
+	
+	public void addCfgPlayer(String player, ConfigPlayer cp){
+		config.players.put(player, cp);
+	}
+	
+	public String getCfgDev(){
+		return config.devname;
+	}
+	
+	public void loadCfg(){
+		try {
+			config.load(config.CONFIG_FILE);
+			updatePrefix(config.name);
+		} catch (InvalidConfigurationException e) {
+			log.severe("[" + getDescription().getName() + "] - Could not load config!");
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveCfg(){
+		try {
+			config.save();
+		} catch (InvalidConfigurationException e) {
+			log.severe("[" + getDescription().getName() + "] - Could not save config!");
+			e.printStackTrace();
+		}
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+	
+	public void log(String m){
+		log.info(m);
+	}
+	
+	public void logToFile(String message)
+	 
+    {
+ 
+		if(!config.logproblems){
+			return;
+		}
+        try
+        {
+            File dataFolder = getDataFolder();
+            if(!dataFolder.exists())
+            {
+                dataFolder.mkdir();
+            }
+ 
+            File saveTo = new File(getDataFolder(), "log.txt");
+            if (!saveTo.exists())
+            {
+                saveTo.createNewFile();
+            }
+ 
+ 
+            Format formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss ");
+            
+            FileWriter fw = new FileWriter(saveTo, true);
+ 
+            PrintWriter pw = new PrintWriter(fw);
+ 
+            pw.println(formatter.format(new Date()) + message);
+ 
+            pw.flush();
+ 
+            pw.close();
+ 
+        } catch (IOException e)
+        {
+ 
+            e.printStackTrace();
+ 
+        }
+ 
     }
+	
 }
 
