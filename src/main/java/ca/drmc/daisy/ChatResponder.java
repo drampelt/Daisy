@@ -1,6 +1,5 @@
 package ca.drmc.daisy;
 
-//import java.util.ArrayList;
 import java.util.Random;
 
 import org.bukkit.entity.Player;
@@ -16,7 +15,7 @@ public class ChatResponder {
 	}
 	
 	public void respond(Player p, String m, String[] split){
-		ConfigPlayer cp = plugin.getCfgPlayer(p.getName());
+		ConfigPlayer cp = plugin.getCfgPlayer(p.getName()); // Get player displayname and mood
 		String ml = m.toLowerCase();
 		plugin.log("DEBUG: responding to " + m);
 		if(split[0].toLowerCase().contains("hi") || split[0].toLowerCase().contains("hey") || split[0].toLowerCase().contains("yo") || split[0].toLowerCase().contains("hello") || split[0].toLowerCase().contains("sup")){
@@ -84,6 +83,7 @@ public class ChatResponder {
 	}
 	
 	private void sendDelayedMessage(final String m){
+		// Delay a message by a random number of ticks between the min and max in the config file
 		long min = (long)(plugin.getCfgMindelay()*20);
 		long max = (long)(plugin.getCfgMaxdelay()*20);
 		long delay = min+((long)(r.nextDouble()*(max-min)));
@@ -98,6 +98,7 @@ public class ChatResponder {
 	}
 	
 	private String chooseMessage(String[] msgs){
+		// Choose a random string in an array
 		return msgs[r.nextInt(msgs.length)];
 	}
 }

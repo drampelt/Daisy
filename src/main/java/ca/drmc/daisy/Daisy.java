@@ -37,6 +37,7 @@ public class Daisy extends JavaPlugin implements Listener {
 		
 		config = new LazyConfig(this);
 		if(!config.CONFIG_FILE.exists()){
+			// If the config file doesn't exist, save it
 			saveCfg();
 		}
 		loadCfg();
@@ -48,14 +49,17 @@ public class Daisy extends JavaPlugin implements Listener {
 	}
 
 	public void updatePrefix(String n) {
+		// Replace & with minecraft's colour character and replace +name with the bot name
 		prefix = ChatColor.translateAlternateColorCodes('&', config.format.replaceAll("\\+name", config.name));
 	}
 
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		// Remove all characters except letters, numbers, and spaces
 		String m = event.getMessage().replaceAll("[^a-zA-Z0-9 ]+","");
 		log("Original: " + event.getMessage() + " | Modified: " + m);
 		String[] split = m.split(" ");
+		// Only respond to messages that end with the bot name
 		if(split[split.length-1].equalsIgnoreCase(config.name)){
 			responder.respond(event.getPlayer(), m, split);
 		}
@@ -66,10 +70,7 @@ public class Daisy extends JavaPlugin implements Listener {
 		responder.playerJoin(event.getPlayer());
 	}
 	
-	public String formatMessage(String m){
-		return prefix + m;
-	}
-
+	// Start config getters/adders/setters
 	public String getCfgName() {
 		return config.name;
 	}
@@ -114,6 +115,7 @@ public class Daisy extends JavaPlugin implements Listener {
 	public String getCfgDev(){
 		return config.devname;
 	}
+	// End config getters/adders/setters
 	
 	public void loadCfg(){
 		try {
@@ -142,10 +144,8 @@ public class Daisy extends JavaPlugin implements Listener {
 		log.info(m);
 	}
 	
-	public void logToFile(String message)
-	 
-    {
- 
+	public void logToFile(String message) {
+		// Log errors to file
 		if(!config.logproblems){
 			return;
 		}
