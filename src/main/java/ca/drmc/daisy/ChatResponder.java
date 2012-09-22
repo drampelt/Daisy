@@ -77,7 +77,7 @@ public class ChatResponder {
 			}
 		}else{
 			// Player is new
-			plugin.addCfgPlayer(p.getName(), new ConfigPlayer(p.getName()));
+			plugin.addCfgPlayer(p.getName(), new ConfigPlayer(p.getName(), true));
 			plugin.saveCfg();
 			sendDelayedMessage("Welcome, " + p.getName() + ", It seems this is our first time meeting each other. My name is " + plugin.getCfgName() + " and I am a server bot.");
 		}

@@ -31,7 +31,7 @@ import org.json.simple.parser.JSONParser;
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 *
 * @author MrFigg
-* @version 1.1
+* @version 1.2
 */
  
 public abstract class ConfigObject {
@@ -286,7 +286,7 @@ public abstract class ConfigObject {
         if(keys != null && keys.size() > 0) {
             for(String key : keys) {
                 Object in = cs.get(key);
-                in = loadObject(field, cs, path+"."+key, depth);
+                in = loadObject(field, cs, key, depth);
                 map.put(key, in);
             }
         }

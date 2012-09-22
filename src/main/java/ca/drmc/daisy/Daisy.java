@@ -40,7 +40,6 @@ public class Daisy extends JavaPlugin implements Listener {
 			saveCfg();
 		}
 		loadCfg();
-		log.info("[" + getDescription().getName() + "] DEBUG: HashMap values - " + config.players.values());
 		updatePrefix(config.name);
 		
 		responder = new ChatResponder(this);

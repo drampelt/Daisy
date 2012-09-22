@@ -21,7 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 *
 * @author MrFigg
-* @version 1.1
+* @version 1.2
 */
  
 public abstract class Config extends ConfigObject {
